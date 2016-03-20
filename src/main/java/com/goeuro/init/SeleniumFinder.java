@@ -44,6 +44,16 @@ public class SeleniumFinder {
     private final int JQUERY_ACTIVE_WAIT = 250;
 
     /**
+     * Number of retries for jquery.
+     */
+    private final int JQUERY_RETRIES_WAIT = 10;
+
+    /**
+     * Milliseconds to wait for each jquery retry.
+     */
+    private final int JQUERY_RETRIES_TIMEOUT = 1000;
+
+    /**
      * Makes a selenium finder.
      *
      * @param webDriver instance of web driver.
@@ -171,15 +181,24 @@ public class SeleniumFinder {
             if (i != 0) {
                 logger.info("Jquery is not active. Check again.");
             }
-            jqueryIsActive = (Boolean) jse.executeScript("return $.active == 0");
-            if (!jqueryIsActive) {
+            try {
+                jqueryIsActive = (Boolean) jse.executeScript("return $.active == 0");
+                if (!jqueryIsActive) {
+                    try {
+                        Thread.sleep(JQUERY_ACTIVE_WAIT);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException("Wait was interrupted");
+                    }
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
                 try {
                     Thread.sleep(JQUERY_ACTIVE_WAIT);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Wait was interrupted");
+                } catch (InterruptedException e1) {
+                    throw new RuntimeException("Interrupted exception has occurred.");
                 }
-            } else {
-                break;
+                logger.info("Something went wrong while checking if jquery is active.");
             }
         }
 
@@ -198,7 +217,19 @@ public class SeleniumFinder {
             throw new RuntimeException("Jquery is not active. Command couldn't be performed.");
         }
 
-        logger.info("Executing '{}'", jquery);
-        return jse.executeScript(jquery);
+        for (int i = 0; i < JQUERY_RETRIES_WAIT; i++) {
+            try {
+                logger.info("Executing '{}'", jquery);
+                return jse.executeScript(jquery);
+            } catch (Exception e) {
+                logger.info("Something went wrong while executing jquery '{}'", jquery);
+                try {
+                    Thread.sleep(JQUERY_RETRIES_TIMEOUT);
+                } catch (InterruptedException e1) {
+                    throw new RuntimeException("Interrupted exception has occurred.");
+                }
+            }
+        }
+        return null;
     }
 }
