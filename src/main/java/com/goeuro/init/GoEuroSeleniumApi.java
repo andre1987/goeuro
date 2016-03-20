@@ -113,15 +113,14 @@ public class GoEuroSeleniumApi {
                 System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, new File("").getAbsolutePath() + PHANTOMJS_DRIVER_WINDOWS_PATH);
                 driver = new PhantomJSDriver(DesiredCapabilities.phantomjs());
                 break;
-            case WINDOWS_IE: break;
             default: throw new RuntimeException("Machine type is invalid");
         }
 
         //maximize the window
         driver.manage().window().maximize();
 
-        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 
         finder = new SeleniumFinder(driver);
         clicker = new SeleniumClicker(finder);
@@ -181,11 +180,7 @@ public class GoEuroSeleniumApi {
         /**
          * Windows machine with phatomsjs.
          */
-        WINDOWS_PHANTOMJS("windows_phantomjs"),
-        /**
-         * Windows machine with internet explorer.
-         */
-        WINDOWS_IE("windows_ie");
+        WINDOWS_PHANTOMJS("windows_phantomjs");
 
         /**
          * Machine in text.
@@ -270,7 +265,10 @@ public class GoEuroSeleniumApi {
          */
         private void verifyOS() {
             //Default operating system is the current operating system.
-            osType = System.getProperty("os") == null ? System.getProperty("os.name").toLowerCase() : System.getProperty("os");
+            osType = System.getProperty("os");
+            if (osType == null) {
+                throw new RuntimeException("Please define operating system with property -Dos.");
+            }
 
             if (!Arrays.asList(allowedOS).contains(osType)) {
                 logger.error("The operating system defined by the property -Dos is not supported.");
