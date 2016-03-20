@@ -13,7 +13,7 @@
     <seleniumVersion>2.53.0</seleniumVersion>
     <project.source>1.8</project.source>
     <surefireVersion>2.18.1</surefireVersion>
-    <phantomJsVersion>1.1.0</phantomJsVersion>
+    <phantomJsVersion>1.2.1</phantomJsVersion>
     <slf4jVersion>1.7.12</slf4jVersion>
     <compilerVersion>3.1</compilerVersion>
     <junitVersion>4.10</junitVersion>
@@ -45,7 +45,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.detro.ghostdriver</groupId>
+      <groupId>com.codeborne</groupId>
       <artifactId>phantomjsdriver</artifactId>
       <version>${phantomJsVersion}</version>
     </dependency>

@@ -31,7 +31,7 @@ public class SeleniumFinder {
     /**
      * Milliseconds to wait for each find try.
      */
-    private final int FIND_WAIT = 10000;
+    private final int FIND_WAIT = 1000;
 
     /**
      * Times to check the jquery active.

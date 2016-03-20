@@ -2,8 +2,10 @@ package com.goeuro.init;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +58,26 @@ public class GoEuroSeleniumApi {
     private SeleniumAsserter asserter;
 
     /**
-     * Chrome driver for linux path.
+     * Path to chrome driver for linux.
      */
     public static final String CHROME_DRIVER_LINUX_PATH = "/src/test/resources/chromedriver";
 
     /**
-     * Default public constructor.
+     * Path to chrome driver for windows.
+     */
+    public static final String CHROME_DRIVER_WINDOWS_PATH = "/src/test/resources/chromedriver.exe";
+
+    /**
+     * Path to phatomjs driver for linux.
+     */
+    public static final String PHANTOMJS_DRIVER_LINUX_PATH = "/src/test/resources/phantomjs";
+
+    /**
+     * Path to phatomjs driver for windows.
+     */
+    public static final String PHANTOMJS_DRIVER_WINDOWS_PATH = "/src/test/resources/phantomjs.exe";
+
+    /**
      * Default public constructor.
      */
     public GoEuroSeleniumApi() {
@@ -79,15 +95,24 @@ public class GoEuroSeleniumApi {
         logger.info("Tests will run in {} - {}", parameters.osType, parameters.browserType);
 
         switch (parameters.type) {
+            case WINDOWS_FIREFOX:
             case LINUX_FIREFOX: driver = new FirefoxDriver(DesiredCapabilities.firefox()); break;
             case LINUX_CHROME:
-                System.setProperty("webdriver.chrome.driver", new File("").getAbsolutePath() + CHROME_DRIVER_LINUX_PATH);
+                System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY, new File("").getAbsolutePath() + CHROME_DRIVER_LINUX_PATH);
                 driver = new ChromeDriver(DesiredCapabilities.chrome());
                 break;
-            case LINUX_PHANTOMJS: driver = new PhantomJSDriver(DesiredCapabilities.phantomjs()); break;
-            case WINDOWS_FIREFOX: break;
-            case WINDOWS_CHROME: break;
-            case WINDOWS_PHANTOMJS: break;
+            case LINUX_PHANTOMJS:
+                System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, new File("").getAbsolutePath() + PHANTOMJS_DRIVER_LINUX_PATH);
+                driver = new PhantomJSDriver(DesiredCapabilities.phantomjs());
+                break;
+            case WINDOWS_CHROME:
+                System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY, new File("").getAbsolutePath() + CHROME_DRIVER_WINDOWS_PATH);
+                driver = new ChromeDriver(DesiredCapabilities.chrome());
+                break;
+            case WINDOWS_PHANTOMJS:
+                System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, new File("").getAbsolutePath() + PHANTOMJS_DRIVER_WINDOWS_PATH);
+                driver = new PhantomJSDriver(DesiredCapabilities.phantomjs());
+                break;
             case WINDOWS_IE: break;
             default: throw new RuntimeException("Machine type is invalid");
         }
